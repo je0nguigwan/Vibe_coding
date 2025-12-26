@@ -1,7 +1,14 @@
-import { RestaurantScore } from "@/lib/types";
+import { Restaurant, RestaurantScore } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-export default function ResultList({ scores }: { scores: RestaurantScore[] }) {
+export default function ResultList({
+  scores,
+  onView,
+}: {
+  scores: RestaurantScore[];
+  onView?: (restaurant: Restaurant) => void;
+}) {
   return (
     <div className="space-y-3">
       {scores.map((score, index) => {
@@ -33,6 +40,16 @@ export default function ResultList({ scores }: { scores: RestaurantScore[] }) {
               <div className="text-right">
                 <p className="text-lg font-bold text-[color:var(--accent)]">{matchPercent}%</p>
                 <p className="text-xs text-[#8e6b5b]">match</p>
+                {onView ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => onView(score.restaurant)}
+                  >
+                    View
+                  </Button>
+                ) : null}
               </div>
             </div>
             <div className="mt-3">

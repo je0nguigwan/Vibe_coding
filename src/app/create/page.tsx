@@ -18,7 +18,6 @@ export default function CreateSessionPage() {
   function handleCreate() {
     const created = createSession(groupName || "Tonight's crew", memberName.trim() || getNextMemberName(0));
     setSessionCode(created.session.code);
-    router.push("/preferences");
   }
 
   useEffect(() => {
@@ -27,11 +26,11 @@ export default function CreateSessionPage() {
   }, [sessionCode]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <NavBar title="Create session" showBack />
 
       <div className="rounded-3xl border border-[#ecd9cb] bg-white p-5">
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
             <label className="text-xs font-semibold text-[#8e6b5b]">Group name</label>
             <Input
@@ -58,7 +57,26 @@ export default function CreateSessionPage() {
         <div className="rounded-3xl border border-[#ecd9cb] bg-[#fff7ef] p-4 text-sm">
           <p className="font-semibold text-[color:var(--primary)]">Session code</p>
           <p className="mt-1 text-lg font-bold text-[color:var(--accent)]">{sessionCode}</p>
-          <p className="mt-2 text-xs text-[#8e6b5b]">Share link: {shareLink}</p>
+          <p className="mt-1 text-xs text-[#8e6b5b]">Share link: {shareLink}</p>
+          <div className="mt-3 flex items-center justify-center">
+            <div
+              className="h-32 w-32 rounded-2xl border border-[#e6d2c3] bg-white p-3"
+              style={{
+                backgroundImage: [
+                  "linear-gradient(90deg, #2b1f1f 50%, transparent 50%)",
+                  "linear-gradient(#2b1f1f 50%, transparent 50%)",
+                  "linear-gradient(90deg, transparent 50%, #2b1f1f 50%)",
+                  "linear-gradient(transparent 50%, #2b1f1f 50%)",
+                ].join(","),
+                backgroundSize: "12px 12px, 12px 12px, 6px 6px, 6px 6px",
+                backgroundPosition: "0 0, 0 0, 3px 3px, 3px 3px",
+              }}
+            />
+          </div>
+          <p className="mt-1 text-center text-xs font-semibold text-[#8e6b5b]">QR</p>
+          <Button className="mt-3 w-full" onClick={() => router.push("/preferences")}>
+            Continue to preferences
+          </Button>
         </div>
       ) : null}
     </div>

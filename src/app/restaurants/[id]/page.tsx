@@ -1,6 +1,6 @@
 import Link from "next/link";
 import restaurantsData from "@/data/restaurants.json";
-import dragonData from "@/../DragonMasterData.json";
+import dragonData from "@/../DragonMasterData.fixed.json";
 import { Restaurant } from "@/lib/types";
 import { getRestaurantImagePath } from "@/lib/restaurant-data";
 import NavBar from "@/components/nav-bar";

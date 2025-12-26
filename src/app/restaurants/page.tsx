@@ -15,7 +15,7 @@ export default function RestaurantsPage() {
       </div>
       <div className="space-y-4">
         {restaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+          <RestaurantCard key={restaurant.id} restaurant={restaurant} showMapPreview />
         ))}
       </div>
     </div>

@@ -267,7 +267,7 @@ export default function SwipeDeck({
           <ThumbsUp className="h-4 w-4" />
         </Button>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="-mt-2.5 flex items-center justify-between">
         <Button asChild variant="ghost" size="sm">
           <Link href="/results">Results</Link>
         </Button>

@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, MessageCircle, Settings, Users } from "lucide-react";
 import SwipeDeck from "@/components/swipe-deck";
 import { Button } from "@/components/ui/button";
-import { filterRestaurants } from "@/lib/filters";
 import { createSession, getCurrentSession, getSession, saveSwipe } from "@/lib/storage";
 import { Cuisine, Restaurant, SessionState } from "@/lib/types";
 import { RawRestaurant, normalizeRestaurant } from "@/lib/restaurant-data";
+import { SWIPE_DECK_SIZE } from "@/lib/constants";
 
 type CuisineCount = Record<string, number>;
 function buildCounts(weights: CuisineCount, total: number) {
@@ -42,40 +42,43 @@ function buildCounts(weights: CuisineCount, total: number) {
   return base;
 }
 
-function buildCuisineDeck(all: Restaurant[], session: SessionState, total: number) {
-  const weights: CuisineCount = {};
-  session.members.forEach((member) => {
-    const prefs = session.preferences[member.id];
-    if (!prefs) return;
-    Object.entries(prefs.cuisine).forEach(([cuisine, value]) => {
-      if (value !== "yes") return;
-      weights[cuisine] = (weights[cuisine] ?? 0) + 1;
-    });
-  });
+function shuffleList<T>(list: T[]) {
+  const items = [...list];
+  for (let i = items.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  return items;
+}
 
-  const counts = buildCounts(weights, total);
-  if (counts.size === 0) return all.slice(0, total);
+function buildPreferenceDeck(
+  all: Restaurant[],
+  prefs: SessionState["preferences"][string] | null,
+  total: number
+) {
+  if (!prefs) return all.slice(0, total);
+  const selectedCuisines = Object.entries(prefs.cuisine)
+    .filter(([, value]) => value === "yes")
+    .map(([cuisine]) => cuisine as Cuisine);
 
-  const byCuisine = all.reduce<Record<string, Restaurant[]>>((acc, restaurant) => {
-    const key = restaurant.cuisine as Cuisine;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(restaurant);
-    return acc;
-  }, {});
-
-  const selected: Restaurant[] = [];
-  counts.forEach((count, cuisine) => {
-    const list = byCuisine[cuisine] ?? [];
-    list.slice(0, count).forEach((item) => selected.push(item));
-  });
-
-  if (selected.length < total) {
-    const used = new Set(selected.map((item) => item.id));
-    const remaining = all.filter((item) => !used.has(item.id));
-    selected.push(...remaining.slice(0, total - selected.length));
+  if (selectedCuisines.length === 0) {
+    return all.slice(0, total);
   }
 
-  return selected.slice(0, total);
+  const cuisineSet = new Set(selectedCuisines);
+  const matches = all.filter((restaurant) => cuisineSet.has(restaurant.cuisine));
+
+  if (matches.length > total) {
+    return shuffleList(matches).slice(0, total);
+  }
+
+  const selected = matches;
+  if (selected.length >= total) return selected.slice(0, total);
+
+  const used = new Set(selected.map((item) => item.id));
+  const pool = all.filter((item) => !used.has(item.id));
+  const extras = shuffleList(pool).slice(0, total - selected.length);
+  return [...selected, ...extras];
 }
 
 export default function SwipePage() {
@@ -84,6 +87,7 @@ export default function SwipePage() {
   const [memberId, setMemberId] = useState<string | null>(null);
   const [dragonRestaurants, setDragonRestaurants] = useState<Restaurant[]>([]);
   const [dataReady, setDataReady] = useState(false);
+  const [showQrPrompt, setShowQrPrompt] = useState(false);
 
   useEffect(() => {
     const current = getCurrentSession();
@@ -102,11 +106,11 @@ export default function SwipePage() {
     let active = true;
     async function loadDragonData() {
       try {
-        const response = await fetch("/data/DragonMasterData.json");
-        if (!response.ok) throw new Error("Failed to load DragonMasterData.json");
+        const response = await fetch("/data/DragonMasterData.fixed.json");
+        if (!response.ok) throw new Error("Failed to load DragonMasterData.fixed.json");
         const payload = (await response.json()) as RawRestaurant[];
         if (!Array.isArray(payload)) {
-          throw new Error("DragonMasterData.json must be an array");
+          throw new Error("DragonMasterData.fixed.json must be an array");
         }
         const normalized = payload.map((item, index) => normalizeRestaurant(item, index + 1));
         if (active) {
@@ -133,10 +137,8 @@ export default function SwipePage() {
     if (!session || !memberId) return [] as Restaurant[];
     const all = dragonRestaurants;
     const prefs = session.preferences[memberId] ?? null;
-    if (!prefs) return all.slice(0, 10);
-    const filtered = filterRestaurants(all, prefs);
-    const base = filtered.length > 0 ? filtered : all;
-    return buildCuisineDeck(base, session, 10);
+    if (!prefs) return all.slice(0, SWIPE_DECK_SIZE);
+    return buildPreferenceDeck(all, prefs, SWIPE_DECK_SIZE);
   }, [session, memberId, dragonRestaurants]);
 
   function handleSwipe(restaurant: Restaurant, value: "like" | "dislike" | "neutral") {
@@ -167,10 +169,14 @@ export default function SwipePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm" className="h-12 w-12 rounded-full" aria-label="Preferences">
-            <Link href="/preferences">
-              <Settings className="h-5 w-5" />
-            </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-12 w-12 rounded-full"
+            aria-label="Preferences"
+            onClick={() => setShowQrPrompt(true)}
+          >
+            <Settings className="h-5 w-5" />
           </Button>
           <Button asChild variant="ghost" size="sm" className="h-12 w-12 rounded-full" aria-label="Group chat">
             <Link href="/chat?mode=group">
@@ -186,6 +192,44 @@ export default function SwipePage() {
       </div>
 
       <SwipeDeck restaurants={restaurants} onSwipe={handleSwipe} onComplete={() => router.push("/results")} />
+
+      {showQrPrompt ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-[360px] rounded-[2rem] border border-[#ecd9cb] bg-white p-5 shadow-xl">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-[color:var(--primary)]">Scan to continue</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowQrPrompt(false);
+                  router.push("/preferences");
+                }}
+              >
+                X
+              </Button>
+            </div>
+            <div className="mt-4 flex items-center justify-center">
+              <div
+                className="h-44 w-44 rounded-2xl border border-[#e6d2c3] bg-white p-3"
+                style={{
+                  backgroundImage: [
+                    "linear-gradient(90deg, #2b1f1f 50%, transparent 50%)",
+                    "linear-gradient(#2b1f1f 50%, transparent 50%)",
+                    "linear-gradient(90deg, transparent 50%, #2b1f1f 50%)",
+                    "linear-gradient(transparent 50%, #2b1f1f 50%)",
+                  ].join(","),
+                  backgroundSize: "12px 12px, 12px 12px, 6px 6px, 6px 6px",
+                  backgroundPosition: "0 0, 0 0, 3px 3px, 3px 3px",
+                }}
+              />
+            </div>
+            <p className="mt-4 text-center text-xs text-[#8e6b5b]">
+              Mock QR for preference setup. Tap X to continue.
+            </p>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

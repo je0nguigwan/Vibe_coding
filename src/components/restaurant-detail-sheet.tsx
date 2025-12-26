@@ -25,6 +25,7 @@ export default function RestaurantDetailSheet({
   if (!restaurant) return null;
   const hoursTable = buildHoursTable(restaurant.hours);
   const otherFields = getOtherFields(restaurant.raw);
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name)}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-4">
@@ -37,6 +38,39 @@ export default function RestaurantDetailSheet({
             Close
           </Button>
         </div>
+
+        {restaurant.source || mapsLink ? (
+          <div className="mt-4 space-y-2">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Links</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {restaurant.source ? (
+                <Button asChild variant="outline" size="sm" className="w-full justify-center">
+                  <a href={restaurant.source} target="_blank" rel="noreferrer">
+                    View source
+                  </a>
+                </Button>
+              ) : null}
+              <Button asChild variant="secondary" size="sm" className="w-full justify-center">
+                <a href={mapsLink} target="_blank" rel="noreferrer">
+                  Open maps
+                </a>
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {restaurant.photos.length > 0 ? (
+          <div className="mt-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Photos</p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {restaurant.photos.map((photo) => (
+                <div key={photo} className="overflow-hidden rounded-2xl border border-[#ecd9cb] bg-[#fff7ef]">
+                  <img src={photo} alt={restaurant.name} className="h-28 w-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {restaurant.description ? (
           <div className="mt-4">
@@ -82,19 +116,6 @@ export default function RestaurantDetailSheet({
           </div>
         </div>
 
-        {restaurant.photos.length > 0 ? (
-          <div className="mt-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Photos</p>
-            <div className="mt-2 flex flex-wrap gap-2 text-xs text-[#6b4b3e]">
-              {restaurant.photos.map((photo) => (
-                <span key={photo} className="rounded-full border border-[#e6d2c3] px-2 py-1">
-                  {photo}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
         {restaurant.comments.length > 0 ? (
           <div className="mt-4">
             <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Comments</p>
@@ -112,13 +133,6 @@ export default function RestaurantDetailSheet({
           <div className="mt-4">
             <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Spiciness</p>
             <p className="mt-2 text-sm text-[#6b4b3e]">{restaurant.spiciness_level}</p>
-          </div>
-        ) : null}
-
-        {restaurant.source ? (
-          <div className="mt-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-[#8e6b5b]">Source</p>
-            <p className="mt-2 text-sm text-[#6b4b3e]">{restaurant.source}</p>
           </div>
         ) : null}
 

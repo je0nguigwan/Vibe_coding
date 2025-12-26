@@ -90,6 +90,7 @@ function normalizeDragon(entry: DragonEntry) {
     return item;
   });
   const imagePath = getRestaurantImagePath(entry.name);
+  const s = String(entry.spiciness_level);
   return {
     name: entry.name,
     rating,
@@ -100,11 +101,10 @@ function normalizeDragon(entry: DragonEntry) {
     comments,
     menu_sample: entry.menu_sample || [],
     spiciness_level:
-      entry.spiciness_level === 3 || entry.spiciness_level === "3"
-        ? "hot"
-        : entry.spiciness_level === 2 || entry.spiciness_level === "2"
-          ? "medium"
-          : "mild",
+      s === "3" ? "hot"
+      : s === "2" ? "medium"
+      : s === "1" ? "mild"
+      : "none",
     source: entry.source || "",
     description: entry.description || "",
     aggregate_comment: entry.aggregate_comment || "",

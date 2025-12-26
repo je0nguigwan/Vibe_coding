@@ -179,9 +179,14 @@ export default function ResultsPage() {
           }
         />
 
-        <ConsensusMeter score={consensusScore} decisionReady={decisionReady} />
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-[#f0ddd0] bg-white p-4 shadow-[0_18px_35px_rgba(135,53,53,0.12)]">
+          <div className="absolute inset-0 results-glow opacity-40" />
+          <div className="relative">
+            <ConsensusMeter score={consensusScore} decisionReady={decisionReady} />
+          </div>
+        </div>
 
-        <div className="rounded-3xl border border-[#ecd9cb] bg-[linear-gradient(135deg,_#fff4ea_0%,_#fff_55%,_#fff0e6_100%)] p-4 shadow-sm">
+        <div className="rounded-[2.5rem] border border-[#ecd9cb] bg-[linear-gradient(135deg,_#fff7ef_0%,_#ffffff_45%,_#f9f3ff_100%)] p-4 shadow-[0_14px_28px_rgba(135,53,53,0.1)]">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-[color:var(--primary)]">Member status</p>
             <span className="text-[10px] uppercase tracking-[0.2em] text-[#8e6b5b]">
@@ -192,7 +197,7 @@ export default function ResultsPage() {
             {memberStats.map((member) => (
               <div
                 key={member.id}
-                className="rounded-2xl border border-[#f0ddd0] bg-white px-3 py-2 text-xs text-[#8e6b5b] shadow-sm"
+                className="rounded-2xl border border-[#f0ddd0] bg-[linear-gradient(135deg,_#ffffff_0%,_#fff6f0_70%,_#f1fbf7_100%)] px-3 py-2 text-xs text-[#8e6b5b] shadow-sm"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -207,7 +212,7 @@ export default function ResultsPage() {
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                       member.complete
-                        ? "bg-[color:var(--success)] text-white"
+                        ? "bg-[linear-gradient(90deg,_#2f8f5b_0%,_#3db97a_100%)] text-white"
                         : "border border-[#edd9cc] bg-white text-[#8e6b5b]"
                     }`}
                   >
@@ -238,7 +243,7 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-[#ecd9cb] bg-[linear-gradient(140deg,_#fff4ea_0%,_#fff_55%,_#fff0e6_100%)] p-4 shadow-sm">
+        <div className="rounded-[2.5rem] border border-[#ecd9cb] bg-[linear-gradient(140deg,_#fff4ea_0%,_#ffffff_50%,_#e8f6ff_100%)] p-4 shadow-[0_14px_28px_rgba(135,53,53,0.1)]">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-[color:var(--primary)]">Top matches</p>
             <span className="rounded-full border border-[#f0ddd0] bg-white px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-[#8e6b5b]">
@@ -252,7 +257,7 @@ export default function ResultsPage() {
               topPicks.map((score) => (
                 <div
                   key={score.restaurant.id}
-                  className="rounded-2xl border border-[#f0ddd0] bg-white/70 p-3 shadow-sm"
+                  className="rounded-2xl border border-[#f0ddd0] bg-[linear-gradient(130deg,_#ffffff_0%,_#fff7ef_55%,_#f9f3ff_100%)] p-3 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -262,7 +267,12 @@ export default function ResultsPage() {
                         {score.restaurant.cuisine} · {score.restaurant.price_range}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => setDetailRestaurant(score.restaurant)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-[#f0ddd0] bg-white/80 shadow-[0_6px_16px_rgba(234,61,119,0.12)]"
+                      onClick={() => setDetailRestaurant(score.restaurant)}
+                    >
                       View
                     </Button>
                   </div>
@@ -275,7 +285,7 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-[#ecd9cb] bg-white/60 p-4 shadow-sm">
+        <div className="rounded-[2.5rem] border border-[#ecd9cb] bg-[linear-gradient(150deg,_#ffffff_0%,_#fff7ef_45%,_#f1fbf7_100%)] p-4 shadow-[0_14px_28px_rgba(135,53,53,0.08)]">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-[color:var(--primary)]">All results</p>
             <span className="text-[10px] uppercase tracking-[0.2em] text-[#8e6b5b]">

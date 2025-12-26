@@ -75,7 +75,7 @@ type DragonEntry = {
   cuisine: string;
   hours: string[];
   photos: string[];
-  comments: [string, string][];
+  comments: string[][];
   menu_sample: string[];
   spiciness_level: string;
   source: string;

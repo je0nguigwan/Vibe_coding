@@ -10,7 +10,7 @@
 
 function neutralRecord<T extends readonly string[]>(items: T) {
   return items.reduce((acc, item) => {
-    acc[item] = "neutral" as PreferenceChoice;
+    acc[item as T[number]] = "neutral";
     return acc;
   }, {} as Record<T[number], PreferenceChoice>);
 }

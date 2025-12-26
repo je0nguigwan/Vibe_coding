@@ -70,17 +70,17 @@ function pickMapStyle(name: string) {
 
 type DragonEntry = {
   name: string;
-  rating: string | number;
+  rating: string;
   price_range: string;
-  cuisine?: string;
-  hours?: string[];
-  photos?: string[];
-  comments?: Array<[string, string] | string>;
-  menu_sample?: string[];
-  spiciness_level?: string | number;
-  source?: string;
-  description?: string;
-  aggregate_comment?: string;
+  cuisine: string;
+  hours: string[];
+  photos: string[];
+  comments: [string, string][];
+  menu_sample: string[];
+  spiciness_level: string;
+  source: string;
+  description: string;
+  aggregate_comment: string;
 };
 
 function normalizeDragon(entry: DragonEntry) {
@@ -118,7 +118,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
   const restaurant =
     restaurants.find((item) => item.id === lookupId) ??
     restaurants.find((item) => slugify(item.name) === paramId);
-  const dragonList = dragonData as DragonEntry[];
+  const dragonList: DragonEntry[] = dragonData;
   const dragonIdMatch = paramId.match(/^d(\d+)$/);
   const dragonById = dragonIdMatch ? dragonList[Number(dragonIdMatch[1]) - 1] : null;
   const dragonMatch = restaurant

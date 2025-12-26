@@ -131,7 +131,7 @@ export default function ResultsPage() {
   const topPicks = scores.slice(0, 2);
 
   return (
-    <div className="relative h-[calc(90vh-60px)] overflow-y-auto pr-1">
+    <div className="relative h-full overflow-y-auto pr-1">
       {showLeaderboard ? (
         <div className="absolute inset-0 z-50 flex items-center justify-center rounded-[2.25rem] p-6 leaderboard-overlay">
           <div className="absolute inset-0 rounded-[2.25rem] leaderboard-confetti opacity-70" />

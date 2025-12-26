@@ -143,7 +143,7 @@ export default function RestaurantDetailPage({ params }: { params: { id: string 
   const hoursTable = buildHoursTable(detail?.hours ?? restaurant?.hours ?? []);
 
   return (
-    <div className="h-[calc(90vh-60px)] overflow-y-auto pr-1">
+    <div className="h-full overflow-y-auto pr-1">
       <div className="space-y-6">
         <NavBar title="Restaurant" showBack />
 

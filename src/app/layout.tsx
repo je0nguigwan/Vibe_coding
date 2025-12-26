@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${displayFont.variable} ${bodyFont.variable} antialiased`}>
-        <div className="min-h-screen bg-black px-4 py-10">
+        <div className="min-h-[100dvh] bg-black px-3 py-6 sm:px-4 sm:py-10">
           <PhoneFrame>{children}</PhoneFrame>
         </div>
       </body>

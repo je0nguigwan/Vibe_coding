@@ -7,7 +7,7 @@ export default function PhoneFrame({ children }: { children: React.ReactNode }) 
         <div className="absolute left-1/2 top-3 h-6 w-24 -translate-x-1/2 rounded-full bg-[#efe0d2]" />
         <div className="absolute left-12 top-4 h-2 w-2 rounded-full bg-[#c9b3a3]" />
         <div className="absolute right-12 top-4 h-2 w-2 rounded-full bg-[#c9b3a3]" />
-        <div className="max-h-[90vh] min-h-[90vh] overflow-hidden rounded-[2.75rem] bg-[linear-gradient(135deg,_#fff3e4_0%,_#ffd1b3_40%,_#ffb07a_70%,_#f59a6f_100%)] px-5 pb-5 pt-10">
+        <div className="h-[min(92dvh,860px)] overflow-hidden rounded-[2.75rem] bg-[linear-gradient(135deg,_#fff3e4_0%,_#ffd1b3_40%,_#ffb07a_70%,_#f59a6f_100%)] px-4 pb-4 pt-9 sm:px-5 sm:pb-5 sm:pt-10">
           {children}
         </div>
       </div>

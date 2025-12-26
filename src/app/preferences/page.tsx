@@ -71,7 +71,7 @@ export default function PreferencesPage() {
   }
 
   return (
-    <div className="h-[calc(90vh-60px)] overflow-y-auto pr-1">
+    <div className="h-full overflow-y-auto pr-1">
       <div className="space-y-6">
         <NavBar title="Preferences" showBack />
         <div className="rounded-3xl border border-[#ecd9cb] bg-[#fff7ef] p-4">
